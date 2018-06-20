@@ -19,7 +19,5 @@ namespace Rendering
 
 		bool Init(int width, int height);
 		void Close();
-
-	
 	};
 }
