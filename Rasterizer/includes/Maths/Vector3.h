@@ -43,7 +43,7 @@ namespace Maths
 			float mag = this->GetMagnitude();
 			if (mag != 0 && mag != 1)
 			{
-				return this->Div(mag);
+				return this->Divison(mag);
 			}
 			return *this;
 		}
@@ -53,7 +53,7 @@ namespace Maths
 			float mag = this->GetMagnitude();
 			if (mag != 0 && mag != 1)
 			{
-				this->Div(mag);
+				this->Divison(mag);
 			}
 		}
 
