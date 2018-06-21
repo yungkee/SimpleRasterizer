@@ -181,6 +181,26 @@ namespace Maths
 			return *this;
 		}
 
+		T& operator[](const int coord)
+		{
+			if (coord == 0)
+				return this->m_x;
+			if (coord == 1)
+				return this->m_y;
+			if (coord == 2)
+				return this->m_z;
+			return this->m_x;
+		}
+		const T& operator[](const int coord) const
+		{
+			if (coord == 0)
+				return this->m_x;
+			if (coord == 1)
+				return this->m_y;
+			if (coord == 2)
+				return this->m_z;
+			return this->m_x;
+		}
 	
 	};
 

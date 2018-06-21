@@ -214,6 +214,12 @@ namespace Maths
 			return *this;
 		}
 
+		Vector3<T> ToVec3() const
+		{
+			Vector4<T> homogenized = this->Homogenize();
+			return Vector3<T>(homogenized.m_x, homogenized.m_y, homogenized.m_z);
+		}
+
 		T& operator[](const int coord)
 		{
 			if (coord == 0)
@@ -240,7 +246,39 @@ namespace Maths
 			return this->m_x;
 		}
 
-		
+		// Comparisons
+
+		bool operator==(const Vector4 &other) const
+		{
+			return this->GetMagnitude() == other.GetMagnitude();
+		}
+
+		bool operator!=(const Vector4 &other) const
+		{
+			return this->GetMagnitude() != other.GetMagnitude();
+		}
+
+		bool operator<(const Vector4 &other) const
+		{
+			return this->GetMagnitude() < other.GetMagnitude();
+		}
+
+		bool operator<=(const Vector4 &other) const
+		{
+			return this->GetMagnitude() <= other.GetMagnitude();
+		}
+
+		bool operator>(const Vector4 &other) const
+		{
+			return this->GetMagnitude() > other.GetMagnitude();
+		}
+
+		bool operator>=(const Vector4 &other) const
+		{
+			return this->GetMagnitude() >= other.GetMagnitude();
+		}
+
 	};
 
+	using Vec4 = Vector4<float>;
 }

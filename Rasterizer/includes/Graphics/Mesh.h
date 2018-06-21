@@ -19,5 +19,11 @@ namespace Graphics
 		Mesh();
 		~Mesh();
 
+		static Mesh* CreateCube();
+		static Mesh* CreateSphere(const int& p_latitudeCount, const int& p_longitudeCount);
+
+	private:
+		void AddTriangleIndices(const int p_idx1, const int p_idx2, const int p_idx3);
+
 	};
 }

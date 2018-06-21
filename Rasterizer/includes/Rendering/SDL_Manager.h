@@ -17,7 +17,13 @@ namespace Rendering
 		SDL_Manager();
 		~SDL_Manager();
 
-		bool Init(int width, int height);
+		bool Init(int p_w, int p_h);
 		void Close();
+
+		Texture* GetBuffer() const;
+
+		void ClearBuffer(const Color& c = Color(0, 0, 0));
+		void UpdateWindow();
+
 	};
 }
