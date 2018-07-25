@@ -29,7 +29,7 @@ namespace Rendering
 	private:
 		void DrawLine(int x1, int y1, int x2, int y2, Texture* target);
 
-		void SortVerticesBy(std::vector<Vertex>& p_vertices, bool x = false, bool y = true, bool z = false);
+		void SortVerticesBy(std::vector<Vertex>& vertices, bool x = false, bool y = true, bool z = false);
 
 		static Vec4 TransformPos(const Vertex& v, Mat4 transform);
 

@@ -7,7 +7,7 @@ SDL_Manager::SDL_Manager() : m_window{ nullptr }, m_renderer{ nullptr }, m_activ
 }
 
 
-bool SDL_Manager::Init(int p_w, int p_h)
+bool SDL_Manager::Init(int width, int height)
 {
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_EVENTS))
 	{
@@ -15,8 +15,8 @@ bool SDL_Manager::Init(int p_w, int p_h)
 			"Rasterizer",
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,
-			p_w,
-			p_h,
+			width,
+			height,
 			SDL_WINDOW_SHOWN | SDL_WINDOW_MOUSE_FOCUS);
 
 		if (this->m_window)
@@ -25,7 +25,7 @@ bool SDL_Manager::Init(int p_w, int p_h)
 
 			if (this->m_renderer)
 			{
-				this->m_activeBuffer = new Texture(p_w, p_h);
+				this->m_activeBuffer = new Texture(width, height);
 				return true;
 			}
 			else

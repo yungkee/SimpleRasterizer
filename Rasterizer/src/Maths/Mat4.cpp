@@ -10,41 +10,41 @@ Mat4::Mat4()
 			this->m_matrix[i][j] = 0;
 }
 
-Mat4::Mat4(std::initializer_list<float> p_initList)
+Mat4::Mat4(std::initializer_list<float> initList)
 {
-	if (p_initList.size() < 16)
+	if (initList.size() < 16)
 		std::cout << "Insufficient elements" << std::endl;
 	else
 	{
-		auto it = p_initList.begin();
+		auto it = initList.begin();
 		for (int i = 0; i < 4; ++i)
 			for (int j = 0; j < 4; ++j)
 				this->m_matrix[i][j] = *it++;
 	}
 }
 
-Mat4::Mat4(const Mat4& p_other)
+Mat4::Mat4(const Mat4& other)
 {
 	for (int i = 0; i < 4; ++i)
 		for (int j = 0; j < 4; ++j)
-			this->m_matrix[i][j] = p_other.m_matrix[i][j];
+			this->m_matrix[i][j] = other.m_matrix[i][j];
 }
 
 
 // TRANFORMATION MATRICES
-Mat4 Mat4::CreateTranslationMatrix(const Vector3<float>& p_translation)
+Mat4 Mat4::CreateTranslationMatrix(const Vector3<float>& translation)
 {
-	return  { 1,0,0,p_translation.m_x,
-		0,1,0,p_translation.m_y,
-		0,0,1,p_translation.m_z,
+	return  { 1,0,0,translation.m_x,
+		0,1,0,translation.m_y,
+		0,0,1,translation.m_z,
 		0,0,0,1 };
 }
 
-Mat4 Mat4::CreateScaleMatrix(const Vector3<float>& p_scale)
+Mat4 Mat4::CreateScaleMatrix(const Vector3<float>& scale)
 {
-	return  { p_scale.m_x,0,0,0,
-		0,p_scale.m_y,0,0,
-		0,0,p_scale.m_z,0,
+	return  { scale.m_x,0,0,0,
+		0,scale.m_y,0,0,
+		0,0,scale.m_z,0,
 		0,0,0,1 };
 }
 
@@ -64,157 +64,157 @@ Mat4 Mat4::CreateYRotationMatrix(const float p_angle)
 		0,				0,	0,				1 };
 }
 
-Mat4 Mat4::CreateZRotationMatrix(const float p_angle)
+Mat4 Mat4::CreateZRotationMatrix(const float angle)
 {
-	return  { cos(p_angle),	-sin(p_angle),	0,	0,
-		sin(p_angle),	cos(p_angle),	0,	0,
+	return  { cos(angle),	-sin(angle),	0,	0,
+		sin(angle),	cos(angle),	0,	0,
 		0,				0,				1,	0,
 		0,				0,				0,	1 };
 }
 
-Mat4 Mat4::CreateRotationMatrix(const Vec3& p_rotation)
+Mat4 Mat4::CreateRotationMatrix(const Vec3& rotation)
 {
-	return  CreateXRotationMatrix(Vec3::ToRad(p_rotation.m_x)) *
-		CreateYRotationMatrix(Vec3::ToRad(p_rotation.m_y)) *
-		CreateZRotationMatrix(Vec3::ToRad(p_rotation.m_z));
+	return  CreateXRotationMatrix(Vec3::ToRad(rotation.m_x)) *
+		CreateYRotationMatrix(Vec3::ToRad(rotation.m_y)) *
+		CreateZRotationMatrix(Vec3::ToRad(rotation.m_z));
 }
 
-Mat4 Mat4::CreateTransformMatrix(const Vec3& p_rotation, const Vec3& p_position, const Vec3& p_scale)
+Mat4 Mat4::CreateTransformMatrix(const Vec3& rotation, const Vec3& p_position, const Vec3& p_scale)
 {
 	return  CreateTranslationMatrix(p_position) *
-		CreateRotationMatrix(p_rotation) *
+		CreateRotationMatrix(rotation) *
 		CreateScaleMatrix(p_scale);
 }
 
 
 // SCALAR OPERATIONS
-Mat4 Mat4::Add(const float& p_scalar) const
+Mat4 Mat4::Add(const float& scalar) const
 {
 	Mat4 add;
 	for (int i = 0; i < 4; ++i)
 		for (int j = 0; j < 4; ++j)
-			add.m_matrix[i][j] = this->m_matrix[i][j] + p_scalar;
+			add.m_matrix[i][j] = this->m_matrix[i][j] + scalar;
 	return add;
 }
 
-void Mat4::Add(const float& p_scalar)
+void Mat4::Add(const float& scalar)
 {
 	for (int i = 0; i < 4; ++i)
 		for (int j = 0; j < 4; ++j)
-			this->m_matrix[i][j] += p_scalar;
+			this->m_matrix[i][j] += scalar;
 }
 
-Mat4 Mat4::Sub(const float& p_scalar) const
+Mat4 Mat4::Sub(const float& scalar) const
 {
 	Mat4 sub;
 	for (int i = 0; i < 4; ++i)
 		for (int j = 0; j < 4; ++j)
-			sub.m_matrix[i][j] = this->m_matrix[i][j] - p_scalar;
+			sub.m_matrix[i][j] = this->m_matrix[i][j] - scalar;
 	return sub;
 }
 
-void Mat4::Sub(const float& p_scalar)
+void Mat4::Sub(const float& scalar)
 {
 	for (int i = 0; i < 4; ++i)
 		for (int j = 0; j < 4; ++j)
-			this->m_matrix[i][j] -= p_scalar;
+			this->m_matrix[i][j] -= scalar;
 }
 
-Mat4 Mat4::Scale(const float& p_scalar) const
+Mat4 Mat4::Scale(const float& scalar) const
 {
 	Mat4 scale;
 	for (int i = 0; i < 4; ++i)
 		for (int j = 0; j < 4; ++j)
-			scale.m_matrix[i][j] = this->m_matrix[i][j] * p_scalar;
+			scale.m_matrix[i][j] = this->m_matrix[i][j] * scalar;
 	return scale;
 }
 
-void Mat4::Scale(const float& p_scalar)
+void Mat4::Scale(const float& scalar)
 {
 	for (int i = 0; i < 4; ++i)
 		for (int j = 0; j < 4; ++j)
-			this->m_matrix[i][j] *= p_scalar;
+			this->m_matrix[i][j] *= scalar;
 }
 
-Mat4 Mat4::Div(const float& p_scalar) const
+Mat4 Mat4::Div(const float& scalar) const
 {
 	Mat4 div;
 	for (int i = 0; i < 4; ++i)
 		for (int j = 0; j < 4; ++j)
-			div.m_matrix[i][j] = this->m_matrix[i][j] / p_scalar;
+			div.m_matrix[i][j] = this->m_matrix[i][j] / scalar;
 	return div;
 }
 
-void Mat4::Div(const float& p_scalar)
+void Mat4::Div(const float& scalar)
 {
 	for (int i = 0; i < 4; ++i)
 		for (int j = 0; j < 4; ++j)
-			this->m_matrix[i][j] /= p_scalar;
+			this->m_matrix[i][j] /= scalar;
 }
 
 
 // MATRICES ARTIHMETICS OPERATIONS
-Mat4 Mat4::Add(const Mat4& p_other) const
+Mat4 Mat4::Add(const Mat4& other) const
 {
 	Mat4 add;
 	for (int i = 0; i < 4; ++i)
 		for (int j = 0; j < 4; ++j)
-			add.m_matrix[i][j] = this->m_matrix[i][j] + p_other.m_matrix[i][j];
+			add.m_matrix[i][j] = this->m_matrix[i][j] + other.m_matrix[i][j];
 	return add;
 }
 
-void Mat4::Add(const Mat4& p_other)
+void Mat4::Add(const Mat4& other)
 {
 	for (int i = 0; i < 4; ++i)
 		for (int j = 0; j < 4; ++j)
-			this->m_matrix[i][j] += p_other.m_matrix[i][j];
+			this->m_matrix[i][j] += other.m_matrix[i][j];
 }
 
-Mat4 Mat4::Sub(const Mat4& p_other) const
+Mat4 Mat4::Sub(const Mat4& other) const
 {
 	Mat4 sub;
 	for (int i = 0; i < 4; ++i)
 		for (int j = 0; j < 4; ++j)
-			sub.m_matrix[i][j] = this->m_matrix[i][j] - p_other.m_matrix[i][j];
+			sub.m_matrix[i][j] = this->m_matrix[i][j] - other.m_matrix[i][j];
 	return sub;
 }
 
-void Mat4::Sub(const Mat4& p_other)
+void Mat4::Sub(const Mat4& other)
 {
 	for (int i = 0; i < 4; ++i)
 		for (int j = 0; j < 4; ++j)
-			this->m_matrix[i][j] -= p_other.m_matrix[i][j];
+			this->m_matrix[i][j] -= other.m_matrix[i][j];
 }
 
-Mat4 Mat4::Multiply(const Mat4& p_other) const
+Mat4 Mat4::Multiply(const Mat4& other) const
 {
 	Mat4 multiply;
 	for (unsigned int i = 0; i < 4; ++i)
 		for (unsigned int j = 0; j < 4; ++j)
-			multiply.m_matrix[i][j] = VectorsMul(this->GetRow(i), p_other.GetColumn(j));
+			multiply.m_matrix[i][j] = VectorsMul(this->GetRow(i), other.GetColumn(j));
 	return multiply;
 }
 
-void Mat4::Multiply(const Mat4& p_other)
+void Mat4::Multiply(const Mat4& other)
 {
 	for (unsigned int i = 0; i < 4; ++i)
 		for (unsigned int j = 0; j < 4; ++j)
-			this->m_matrix[i][j] = VectorsMul(this->GetRow(i), p_other.GetColumn(j));
+			this->m_matrix[i][j] = VectorsMul(this->GetRow(i), other.GetColumn(j));
 }
 
-Vector4<float> Mat4::Multiply(const Vector4<float>& p_other) const
+Vector4<float> Mat4::Multiply(const Vector4<float>& other) const
 {
 	Vector4<float> multiply;
 	for (unsigned int i = 0; i < 4; ++i)
-		multiply[i] = VectorsMul(this->GetRow(i), p_other);
+		multiply[i] = VectorsMul(this->GetRow(i), other);
 	return multiply;
 }
 
-void Mat4::Multiply(const Vector4<float>& p_other)
+void Mat4::Multiply(const Vector4<float>& other)
 {
 	for (unsigned int i = 0; i < 4; ++i)
 		for (unsigned int j = 0; j < 4; ++j)
-			this->m_matrix[i][j] = VectorsMul(this->GetRow(i), p_other);
+			this->m_matrix[i][j] = VectorsMul(this->GetRow(i), other);
 }
 
 float Mat4::VectorsMul(const Vector4<float>& p_v1, const Vector4<float>& p_v2)
@@ -309,11 +309,11 @@ float& Mat4::operator()(unsigned int p_row, unsigned int p_col)
 
 
 // TESTS
-bool Mat4::IsEqual(const Mat4& p_other)
+bool Mat4::IsEqual(const Mat4& other)
 {
 	for (unsigned int i = 0; i < 4; ++i)
 		for (unsigned int j = 0; j < 4; ++j)
-			if (m_matrix[i][j] != p_other.m_matrix[i][j])
+			if (m_matrix[i][j] != other.m_matrix[i][j])
 				return false;
 	return true;
 }
@@ -337,43 +337,43 @@ bool Mat4::IsIdentity() const
 	return true;
 }
 
-Mat4 Mat4::operator+(const Mat4& p_other) const { return Add(p_other); }
-void Mat4::operator+=(const Mat4& p_other) { Add(p_other); }
+Mat4 Mat4::operator+(const Mat4& other) const { return Add(other); }
+void Mat4::operator+=(const Mat4& other) { Add(other); }
 
-Mat4 Mat4::operator-(const Mat4& p_other) const { return Sub(p_other); }
-void Mat4::operator-=(const Mat4& p_other) { Sub(p_other); }
+Mat4 Mat4::operator-(const Mat4& other) const { return Sub(other); }
+void Mat4::operator-=(const Mat4& other) { Sub(other); }
 
-Mat4 Mat4::operator*(const Mat4& p_other) const { return Multiply(p_other); }
-void Mat4::operator*=(const Mat4& p_other) { Multiply(p_other); }
-
-
-Vector4<float> Mat4::operator*(const Vector4<float>& p_other) const { return Multiply(p_other); }
-void Mat4::operator*=(const Vector4<float>& p_other) { Multiply(p_other); }
+Mat4 Mat4::operator*(const Mat4& other) const { return Multiply(other); }
+void Mat4::operator*=(const Mat4& other) { Multiply(other); }
 
 
-Mat4 Mat4::operator+(const float& p_scalar) const { return Add(p_scalar); }
-void Mat4::operator+=(const float& p_scalar) { Add(p_scalar); }
-
-Mat4 Mat4::operator-(const float& p_scalar) const { return Sub(p_scalar); }
-void Mat4::operator-=(const float& p_scalar) { Sub(p_scalar); }
-
-Mat4 Mat4::operator*(const float& p_scalar) const { return Scale(p_scalar); }
-void Mat4::operator*=(const float& p_scalar) { Scale(p_scalar); }
-
-Mat4 Mat4::operator/(const float& p_scalar) const { return Div(p_scalar); }
-void Mat4::operator/=(const float& p_scalar) { Div(p_scalar); }
+Vector4<float> Mat4::operator*(const Vector4<float>& other) const { return Multiply(other); }
+void Mat4::operator*=(const Vector4<float>& other) { Multiply(other); }
 
 
-bool Mat4::operator==(const Mat4& p_other) { return IsEqual(p_other); }
-bool Mat4::operator!=(const Mat4& p_other) { return !IsEqual(p_other); }
+Mat4 Mat4::operator+(const float& scalar) const { return Add(scalar); }
+void Mat4::operator+=(const float& scalar) { Add(scalar); }
+
+Mat4 Mat4::operator-(const float& scalar) const { return Sub(scalar); }
+void Mat4::operator-=(const float& scalar) { Sub(scalar); }
+
+Mat4 Mat4::operator*(const float& scalar) const { return Scale(scalar); }
+void Mat4::operator*=(const float& scalar) { Scale(scalar); }
+
+Mat4 Mat4::operator/(const float& scalar) const { return Div(scalar); }
+void Mat4::operator/=(const float& scalar) { Div(scalar); }
 
 
-std::ostream& Maths::operator<<(std::ostream& p_os, const Mat4& p_other)
+bool Mat4::operator==(const Mat4& other) { return IsEqual(other); }
+bool Mat4::operator!=(const Mat4& other) { return !IsEqual(other); }
+
+
+std::ostream& Maths::operator<<(std::ostream& p_os, const Mat4& other)
 {
 	for (int i = 0; i < 4; ++i)
 	{
 		for (int j = 0; j < 4; ++j)
-			p_os << p_other(i, j) << " ";
+			p_os << other(i, j) << " ";
 		p_os << std::endl;
 	}
 	return p_os;

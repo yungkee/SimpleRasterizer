@@ -148,16 +148,16 @@ void Rasterizer::DrawTopFlatTriangle(const std::vector<Vertex>& triangle, Textur
 }
 
 
-void Rasterizer::DrawBottomFlatTriangle(const std::vector<Vertex>& p_triangle, Texture* p_target)
+void Rasterizer::DrawBottomFlatTriangle(const std::vector<Vertex>& triangle, Texture* target)
 {
-	int v1x = p_triangle[0].GetPosition().m_x;
-	int v1y = p_triangle[0].GetPosition().m_y;
+	int v1x = triangle[0].GetPosition().m_x;
+	int v1y = triangle[0].GetPosition().m_y;
 
-	int v2x = p_triangle[1].GetPosition().m_x;
-	int v2y = p_triangle[1].GetPosition().m_y;
+	int v2x = triangle[1].GetPosition().m_x;
+	int v2y = triangle[1].GetPosition().m_y;
 
-	int v3x = p_triangle[2].GetPosition().m_x;
-	int v3y = p_triangle[2].GetPosition().m_y;
+	int v3x = triangle[2].GetPosition().m_x;
+	int v3y = triangle[2].GetPosition().m_y;
 
 	//SETUP 2ND LINE
 	const uint8_t octant2 = GetLineOctant(v3x, v3y, v1x, v1y);
@@ -197,7 +197,7 @@ void Rasterizer::DrawBottomFlatTriangle(const std::vector<Vertex>& p_triangle, T
 			if (v3x <= v1x)
 			{
 				SwitchFromOctantOne(octant2, v3x, v3y);
-				DrawHorizontalLine(v2x, v3x, v3y, p_target);
+				DrawHorizontalLine(v2x, v3x, v3y, target);
 				SwitchToOctantOne(octant2, v3x, v3y);
 				++v3x;
 				e2 += dy2;
@@ -423,42 +423,42 @@ void Rasterizer::SwitchFromOctantOne(const uint8_t octant, int& x, int& y)
 
 
 
-Mat4 Rasterizer::CreatePerspectiveProjectionMatrix(const int& p_width, const int& p_height, const float& p_near,
-	const float& p_far, const float& p_fov)
+Mat4 Rasterizer::CreatePerspectiveProjectionMatrix(const int& width, const int& height, const float& near,
+	const float& far, const float& fov)
 {
-	const float ratio = p_width / (float)p_height;
-	const float dist = p_far - p_near;
-	const float scale = 1 / tanf(p_fov * 0.5f * (float)M_PI / 180.f);
+	const float ratio = width / (float)height;
+	const float dist = far - near;
+	const float scale = 1 / tanf(fov * 0.5f * (float)M_PI / 180.f);
 
 	// FOV Based perspective
 	return Mat4{
 		scale, 0, 0, 0,
 		0, scale * ratio, 0, 0,
-		0, 0, -p_far / dist, -(p_far * p_near) / dist,
+		0, 0, -far / dist, -(far * near) / dist,
 		0, 0, -1, 0
 	};
 }
 
-Mat4 Rasterizer::CreatePerspectiveProjectionMatrix(const float& p_left, const float& p_right, const float& p_bottom,
-	const float& p_top, const float& p_near, const float& p_far)
+Mat4 Rasterizer::CreatePerspectiveProjectionMatrix(const float& left, const float& right, const float& bottom,
+	const float& top, const float& near, const float& far)
 {
 	// Top-Bottom-Left-Right Based perspective
 	return Mat4{
-		2 * p_near / (p_right - p_left), 0, (p_right + p_left) / (p_right - p_left), 0,
-		0, 2 * p_near / (p_top - p_bottom), (p_top + p_bottom) / (p_top - p_bottom), 0,
-		0, 0, -(p_far + p_near) / (p_far - p_near) , -2 * p_far * p_near / (p_far - p_near),
+		2 * near / (right - left), 0, (right + left) / (right - left), 0,
+		0, 2 * near / (top - bottom), (top + bottom) / (top - bottom), 0,
+		0, 0, -(far + near) / (far - near) , -2 * far * near / (far - near),
 		0, 0, -1, 0
 	};
 }
 
-Mat4 Rasterizer::CreateOrthographicProjectionMatrix(const float& p_left, const float& p_right, const float& p_bottom,
-	const float& p_top, const float& p_near, const float& p_far)
+Mat4 Rasterizer::CreateOrthographicProjectionMatrix(const float& left, const float& right, const float& bottom,
+	const float& top, const float& near, const float& far)
 {
 	// Orthographic Projection
 	return Mat4{
-		2 / (p_right - p_left), 0, 0, -(p_right + p_left) / (p_right - p_left),
-		0, 2 / (p_top - p_bottom), 0, -(p_top + p_bottom) / (p_top - p_bottom),
-		0, 0, -2 / (p_far - p_near) , -(p_far + p_near) / (p_far - p_near),
+		2 / (right - left), 0, 0, -(right + left) / (right - left),
+		0, 2 / (top - bottom), 0, -(top + bottom) / (top - bottom),
+		0, 0, -2 / (far - near) , -(far + near) / (far - near),
 		0, 0, 0, 1
 	};
 }
