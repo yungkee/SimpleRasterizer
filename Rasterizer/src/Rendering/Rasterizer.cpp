@@ -34,27 +34,27 @@ void Rasterizer::RenderScene(Scene * scene, Texture* target)
   }
 }
 
-void Rasterizer::DrawTriangle(std::vector<Vertex> p_triangle, Texture* p_target)
+void Rasterizer::DrawTriangle(std::vector<Vertex> triangle, Texture* target)
 {
-  if (p_triangle.size() != 3)
+  if (triangle.size() != 3)
     return;
 
-  SortVerticesBy(p_triangle);
+  SortVerticesBy(triangle);
   int v1x, v1y;
   int v2x, v2y;
   int v3x, v3y;
 
-  WorldToScreenCoord(5, 5, p_target->Width(), p_target->Height(), p_triangle[0].GetPosition(), v1x, v1y);
-  WorldToScreenCoord(5, 5, p_target->Width(), p_target->Height(), p_triangle[1].GetPosition(), v2x, v2y);
-  WorldToScreenCoord(5, 5, p_target->Width(), p_target->Height(), p_triangle[2].GetPosition(), v3x, v3y);
+  WorldToScreenCoord(5, 5, target->Width(), target->Height(), triangle[0].GetPosition(), v1x, v1y);
+  WorldToScreenCoord(5, 5, target->Width(), target->Height(), triangle[1].GetPosition(), v2x, v2y);
+  WorldToScreenCoord(5, 5, target->Width(), target->Height(), triangle[2].GetPosition(), v3x, v3y);
   
   if (v2y == v3y)
   {
-    DrawBottomFlatTriangle(std::vector<Vertex> {Vec3(v1x,v1y),Vec3(v2x,v2y),Vec3(v3x,v3y)}, p_target);
+    DrawBottomFlatTriangle(std::vector<Vertex> {Vec3(v1x,v1y),Vec3(v2x,v2y),Vec3(v3x,v3y)}, target);
   }
   else if (v1y == v2y)
   {
-    DrawTopFlatTriangle(std::vector<Vertex> {Vec3(v1x, v1y), Vec3(v2x, v2y), Vec3(v3x, v3y)}, p_target);
+    DrawTopFlatTriangle(std::vector<Vertex> {Vec3(v1x, v1y), Vec3(v2x, v2y), Vec3(v3x, v3y)}, target);
   }
   else
   {
@@ -63,24 +63,24 @@ void Rasterizer::DrawTriangle(std::vector<Vertex> p_triangle, Texture* p_target)
     const std::vector<Vertex> bottomFlatTriangle = {Vec3(v1x,v1y), Vec3(v2x,v2y), v4};
     const std::vector<Vertex> topFlatTriangle = {Vec3(v2x,v2y), v4, Vec3(v3x,v3y)};
 
-    DrawBottomFlatTriangle(bottomFlatTriangle, p_target);
-    DrawTopFlatTriangle(topFlatTriangle, p_target);
+    DrawBottomFlatTriangle(bottomFlatTriangle, target);
+    DrawTopFlatTriangle(topFlatTriangle, target);
   }
 
 }
 
 
 
-void Rasterizer::DrawTopFlatTriangle(const std::vector<Vertex>& p_triangle, Texture* p_target)
+void Rasterizer::DrawTopFlatTriangle(const std::vector<Vertex>& triangle, Texture* target)
 {
-  int v1x = p_triangle[0].GetPosition().m_x;
-  int v1y = p_triangle[0].GetPosition().m_y;
+  int v1x = triangle[0].GetPosition().m_x;
+  int v1y = triangle[0].GetPosition().m_y;
 
-  int v2x = p_triangle[1].GetPosition().m_x;
-  int v2y = p_triangle[1].GetPosition().m_y;
+  int v2x = triangle[1].GetPosition().m_x;
+  int v2y = triangle[1].GetPosition().m_y;
 
-  int v3x = p_triangle[2].GetPosition().m_x;
-  int v3y = p_triangle[2].GetPosition().m_y;
+  int v3x = triangle[2].GetPosition().m_x;
+  int v3y = triangle[2].GetPosition().m_y;
 
 
   //SETUP 2ND LINE
@@ -121,7 +121,7 @@ void Rasterizer::DrawTopFlatTriangle(const std::vector<Vertex>& p_triangle, Text
     if (v2x <= v3x)
     {
       SwitchFromOctantOne(octant2, v2x, v2y);
-      DrawHorizontalLine(v1x, v2x, v2y, p_target);
+      DrawHorizontalLine(v1x, v2x, v2y, target);
       SwitchToOctantOne(octant2, v2x, v2y);
       ++v2x;
       e2 += dy2;
@@ -420,3 +420,45 @@ void Rasterizer::SwitchFromOctantOne(const uint8_t octant, int& x, int& y)
     break; 
   } 
 } 
+
+
+
+Mat4 Rasterizer::CreatePerspectiveProjectionMatrix(const int& p_width, const int& p_height, const float& p_near,
+	const float& p_far, const float& p_fov)
+{
+	const float ratio = p_width / (float)p_height;
+	const float dist = p_far - p_near;
+	const float scale = 1 / tanf(p_fov * 0.5f * (float)M_PI / 180.f);
+
+	// FOV Based perspective
+	return Mat4{
+		scale, 0, 0, 0,
+		0, scale * ratio, 0, 0,
+		0, 0, -p_far / dist, -(p_far * p_near) / dist,
+		0, 0, -1, 0
+	};
+}
+
+Mat4 Rasterizer::CreatePerspectiveProjectionMatrix(const float& p_left, const float& p_right, const float& p_bottom,
+	const float& p_top, const float& p_near, const float& p_far)
+{
+	// Top-Bottom-Left-Right Based perspective
+	return Mat4{
+		2 * p_near / (p_right - p_left), 0, (p_right + p_left) / (p_right - p_left), 0,
+		0, 2 * p_near / (p_top - p_bottom), (p_top + p_bottom) / (p_top - p_bottom), 0,
+		0, 0, -(p_far + p_near) / (p_far - p_near) , -2 * p_far * p_near / (p_far - p_near),
+		0, 0, -1, 0
+	};
+}
+
+Mat4 Rasterizer::CreateOrthographicProjectionMatrix(const float& p_left, const float& p_right, const float& p_bottom,
+	const float& p_top, const float& p_near, const float& p_far)
+{
+	// Orthographic Projection
+	return Mat4{
+		2 / (p_right - p_left), 0, 0, -(p_right + p_left) / (p_right - p_left),
+		0, 2 / (p_top - p_bottom), 0, -(p_top + p_bottom) / (p_top - p_bottom),
+		0, 0, -2 / (p_far - p_near) , -(p_far + p_near) / (p_far - p_near),
+		0, 0, 0, 1
+	};
+}
